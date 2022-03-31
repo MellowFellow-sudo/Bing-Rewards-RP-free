@@ -109,6 +109,9 @@ def search(driver, total):
         driver.get(f"https://www.bing.com/search?q={word}&qs=n&form=QBRE&sp=-1&pq=aaaa&sc=8-4&sk=&cvid=68BA88FDD17C49629D9563F0C2E1FEF1")
     driver.quit()
 
+def edge(driver, total):
+    None 
+
 def getStatus(driver):
     driver.get("https://rewards.bing.com/status/pointsbreakdown")
 
@@ -132,22 +135,28 @@ def getStatus(driver):
     return math.ceil(total_pc/3), math.ceil(total_mobile/3), math.ceil(total_edge/3)
 
 def main():
-    # Get information of the remaining tasks
-    driver = pcDriver()
-    data = getStatus(driver)
+    check = True
+    while check:
+        check = False
 
-    # Complete the PC searches
-    if data[0] > 0:
-        art_pc()
-        search(driver, data[0])
+        # Get information of the remaining tasks
+        driver = pcDriver()
+        data = getStatus(driver)
 
-    # Complete the Mobile searches
-    if data[1] > 0:
-        art_mobile()
-        driver = mobileDriver()
-        search(driver, data[1])
+        # Complete the PC searches
+        if data[0] > 0:
+            art_pc()
+            search(driver, data[0])
+            check = True
 
-    # Probably complete the Edge task in future c:
+        # Complete the Mobile searches
+        if data[1] > 0:
+            art_mobile()
+            driver = mobileDriver()
+            search(driver, data[1])
+            check = True
+
+        # Probably complete the Edge task in future c:
 
     print(f"\n{GREEN}[{WHITE}·{GREEN}] Done!{RESET}")
 
