@@ -83,7 +83,7 @@ def art_edge():
 def pcDriver():
     s = Service(ChromeDriverManager().install())
     options = webdriver.ChromeOptions()
-    options.add_argument(r'--user-data-dir=C:/Users/Neko/AppData/Local/Google/Chrome/User Data/')
+    options.add_argument(f'--user-data-dir=C:/Users/{WINDOWS_USER}/AppData/Local/Google/Chrome/User Data/')
     options.add_argument("--log-level=3")
     driver = webdriver.Chrome(service=s, options=options)
 
