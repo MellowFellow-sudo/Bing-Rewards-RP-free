@@ -9,7 +9,12 @@ First of all, you need to login to your account on Chrome. The program uses Chro
 
 Second, install the required dependencies: `pip install -r requirements.txt`
 
-And, finally, run the program, it automatically starts Chrome and makes the searches on PC mode and Mobile mode.
+And, finally, change the Windows User on:
+```py
+WINDOWS_USER = "Neko" # Change this to your username
+```
+
+Run the program and it automatically starts Chrome and makes the searches on PC mode and Mobile mode.
 
 # Important! ⚠️
 You can't use Chrome when te program is running, so you need to close Chrome before running the program.
