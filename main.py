@@ -4,6 +4,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.by import By
 from colorama import Fore, init
+from prettytable import PrettyTable
 import requests, random, math
 init()
 
@@ -40,6 +41,43 @@ def new_search():
 
     return search
 
+def art_pc():
+        print("""
+        
+    ██████╗  ██████╗
+    ██╔══██╗██╔════╝
+    ██████╔╝██║     
+    ██╔═══╝ ██║     
+    ██║     ╚██████╗
+    ╚═╝      ╚═════╝
+                    
+    """)
+
+def art_mobile():
+    print("""
+
+    ███╗   ███╗ ██████╗ ██████╗ ██╗██╗     ███████╗
+    ████╗ ████║██╔═══██╗██╔══██╗██║██║     ██╔════╝
+    ██╔████╔██║██║   ██║██████╔╝██║██║     █████╗  
+    ██║╚██╔╝██║██║   ██║██╔══██╗██║██║     ██╔══╝  
+    ██║ ╚═╝ ██║╚██████╔╝██████╔╝██║███████╗███████╗
+    ╚═╝     ╚═╝ ╚═════╝ ╚═════╝ ╚═╝╚══════╝╚══════╝
+                                                
+    """)
+    
+def art_edge():
+    print("""
+        
+    ███████╗██████╗  ██████╗ ███████╗
+    ██╔════╝██╔══██╗██╔════╝ ██╔════╝
+    █████╗  ██║  ██║██║  ███╗█████╗  
+    ██╔══╝  ██║  ██║██║   ██║██╔══╝  
+    ███████╗██████╔╝╚██████╔╝███████╗
+    ╚══════╝╚═════╝  ╚═════╝ ╚══════╝
+                                    
+    """)
+
+
 def pcDriver():
     s = Service(ChromeDriverManager().install())
     options = webdriver.ChromeOptions()
@@ -65,28 +103,30 @@ def mobileDriver():
 def search(driver, total):
     for i in range(total):
         word = new_search()
-        print(f"{CYAN}[·] Search {WHITE}{i+1}{CYAN}: {BLUE}{word}{RESET}")
+        print(f"{CYAN}[{WHITE}{i+1}{CYAN}] Search: {BLUE}{word}{RESET}")
         driver.get(f"https://www.bing.com/search?q={word}&qs=n&form=QBRE&sp=-1&pq=aaaa&sc=8-4&sk=&cvid=68BA88FDD17C49629D9563F0C2E1FEF1")
     driver.quit()
 
 def getStatus(driver):
     driver.get("https://rewards.bing.com/status/pointsbreakdown")
 
+    t = PrettyTable([f'{WHITE}Task type{RESET}', f'{WHITE}Remaining points{RESET}', f'{WHITE}Searches{RESET}'])
     while True:
         try:
             pc = driver.find_element(By.XPATH, '//*[@id="userPointsBreakdown"]/div/div[2]/div/div[1]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]/b').text
             total_pc = 90 - int(pc)
-            print(f"{GREEN if total_pc == 0 else RED}[{WHITE}·{GREEN if total_pc == 0 else RED}] PC: {WHITE}{total_pc} {RESET}")
+            t.add_row([f'{GREEN if total_pc == 0 else RED}PC{RESET}', f'{GREEN if total_pc == 0 else RED}{total_pc}{RESET}', f'{GREEN if total_pc == 0 else RED}{math.ceil(total_pc/3)}{RESET}'])
 
             mobile = driver.find_element(By.XPATH, '//*[@id="userPointsBreakdown"]/div/div[2]/div/div[2]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]/b').text
             total_mobile = 60 - int(mobile)
-            print(f"{GREEN if total_mobile == 0 else RED}[{WHITE}·{GREEN if total_mobile == 0 else RED}] Mobile: {WHITE}{total_mobile} {RESET}")
+            t.add_row([f'{GREEN if total_mobile == 0 else RED}PC{RESET}', f'{GREEN if total_mobile == 0 else RED}{total_mobile}{RESET}', f'{GREEN if total_mobile == 0 else RED}{math.ceil(total_mobile/3)}{RESET}'])
 
             edge = driver.find_element(By.XPATH, '//*[@id="userPointsBreakdown"]/div/div[2]/div/div[3]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]/b').text
             total_edge = 12 - int(edge)
-            print(f"{GREEN if total_edge == 0 else RED}[{WHITE}·{GREEN if total_edge == 0 else RED}] Edge: {WHITE}{total_edge} {RESET}")
+            t.add_row([f'{GREEN if total_edge == 0 else RED}PC{RESET}', f'{GREEN if total_edge == 0 else RED}{total_edge}{RESET}', f'{GREEN if total_edge == 0 else RED}{math.ceil(total_edge/3)}{RESET}'])
             break
-        except: pass
+        except: print(RED + f"[{WHITE}·{RED}] Retrying..." + RESET)
+    print(t)
     return math.ceil(total_pc/3), math.ceil(total_mobile/3), math.ceil(total_edge/3)
 
 def main():
@@ -95,10 +135,13 @@ def main():
     data = getStatus(driver)
 
     # Complete the PC searches
-    if data[0] > 0: search(driver, data[0])
+    if data[0] > 0:
+        art_pc()
+        search(driver, data[0])
 
     # Complete the Mobile searches
     if data[1] > 0:
+        art_mobile()
         driver = mobileDriver()
         search(driver, data[1])
 
