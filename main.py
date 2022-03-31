@@ -8,6 +8,8 @@ from prettytable import PrettyTable
 import requests, random, math
 init()
 
+WINDOWS_USER = "Neko" # Change this to your username
+
 ####### COLORS #######
 RED = Fore.LIGHTRED_EX
 GREEN = Fore.LIGHTGREEN_EX
@@ -94,7 +96,7 @@ def mobileDriver():
 
     options = webdriver.ChromeOptions()
     options.add_experimental_option("mobileEmulation", mobile_emulation)
-    options.add_argument(r'--user-data-dir=C:/Users/Neko/AppData/Local/Google/Chrome/User Data/')
+    options.add_argument(f'--user-data-dir=C:/Users/{WINDOWS_USER}/AppData/Local/Google/Chrome/User Data/')
     options.add_argument("--log-level=3")
     driver = webdriver.Chrome(service=s, options=options)
     
@@ -123,7 +125,7 @@ def getStatus(driver):
 
             edge = driver.find_element(By.XPATH, '//*[@id="userPointsBreakdown"]/div/div[2]/div/div[3]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]/b').text
             total_edge = 12 - int(edge)
-            t.add_row([f'{GREEN if total_edge == 0 else RED}PC{RESET}', f'{GREEN if total_edge == 0 else RED}{total_edge}{RESET}', f'{GREEN if total_edge == 0 else RED}{math.ceil(total_edge/3)}{RESET}'])
+            t.add_row([f'{GREEN if total_edge == 0 else RED}PC{RESET}', f'{GREEN if total_edge == 0 else RED}{total_edge}{RESET}','-'])
             break
         except: print(RED + f"[{WHITE}·{RED}] Retrying..." + RESET)
     print(t)
