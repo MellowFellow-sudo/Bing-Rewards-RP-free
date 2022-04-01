@@ -1,8 +1,6 @@
-from pandas import ExcelFile
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.common.by import By
 from selenium.webdriver.common.by import By
 from colorama import Fore, init
 from prettytable import PrettyTable
@@ -81,13 +79,13 @@ def art_edge():
                                     
     """)
 
-
 def pcDriver():
     s = Service(ChromeDriverManager().install())
     options = webdriver.ChromeOptions()
     options.add_argument(f'--user-data-dir=C:/Users/{WINDOWS_USER}/AppData/Local/Google/Chrome/User Data/')
     options.add_argument("--log-level=3")
-    driver = webdriver.Chrome(service=s, options=options)
+    try: driver = webdriver.Chrome(service=s, options=options)
+    except Exception as error: return f"\n{RED}[{WHITE}error{RED}] Close Chrome before using this program :3{RESET}\n{error}"
 
     return driver
 
@@ -100,7 +98,8 @@ def mobileDriver():
     options.add_experimental_option("mobileEmulation", mobile_emulation)
     options.add_argument(f'--user-data-dir=C:/Users/{WINDOWS_USER}/AppData/Local/Google/Chrome/User Data/')
     options.add_argument("--log-level=3")
-    driver = webdriver.Chrome(service=s, options=options)
+    try: driver = webdriver.Chrome(service=s, options=options)
+    except Exception as error: return f"\n{RED}[{WHITE}error{RED}] Close Chrome before using this program :3{RESET}\n{error}"
     
     return driver
 
@@ -118,25 +117,27 @@ def getStatus(driver):
     global lvl_1
     driver.get("https://rewards.bing.com/status/pointsbreakdown")
 
-    t = PrettyTable([f'{WHITE}Task type{RESET}', f'{WHITE}Remaining points{RESET}', f'{WHITE}Searches{RESET}'])
+    table = PrettyTable([f'{WHITE}Task type{RESET}', f'{WHITE}Remaining points{RESET}', f'{WHITE}Searches{RESET}'])
     while True:
         try:
             pc = driver.find_element(By.XPATH, '//*[@id="userPointsBreakdown"]/div/div[2]/div/div[1]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]/b').text
             total_pc = 90 - int(pc)
-            t.add_row([f'{GREEN if total_pc == 0 else RED}PC{RESET}', f'{GREEN if total_pc == 0 else RED}{total_pc}{RESET}', f'{GREEN if total_pc == 0 else RED}{math.ceil(total_pc/3)}{RESET}'])
+            table.add_row([f'{GREEN if total_pc == 0 else RED}PC{RESET}', f'{GREEN if total_pc == 0 else RED}{total_pc}{RESET}', f'{GREEN if total_pc == 0 else RED}{math.ceil(total_pc/3)}{RESET}'])
 
             mobile = driver.find_element(By.XPATH, '//*[@id="userPointsBreakdown"]/div/div[2]/div/div[2]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]/b').text
             total_mobile = 60 - int(mobile)
-            t.add_row([f'{GREEN if total_mobile == 0 else RED}Mobile{RESET}', f'{GREEN if total_mobile == 0 else RED}{total_mobile}{RESET}', f'{GREEN if total_mobile == 0 else RED}{math.ceil(total_mobile/3)}{RESET}'])
+            table.add_row([f'{GREEN if total_mobile == 0 else RED}Mobile{RESET}', f'{GREEN if total_mobile == 0 else RED}{total_mobile}{RESET}', f'{GREEN if total_mobile == 0 else RED}{math.ceil(total_mobile/3)}{RESET}'])
 
             try:
                 edge = driver.find_element(By.XPATH, '//*[@id="userPointsBreakdown"]/div/div[2]/div/div[3]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]/b').text
                 total_edge = 12 - int(edge)
-                t.add_row([f'{GREEN if total_edge == 0 else RED}Edge{RESET}', f'{GREEN if total_edge == 0 else RED}{total_edge}{RESET}','-'])
-            except: lvl_1 = True
+                table.add_row([f'{GREEN if total_edge == 0 else RED}Edge{RESET}', f'{GREEN if total_edge == 0 else RED}{total_edge}{RESET}','-'])
+            except:
+                lvl_1 = True
+                total_edge = 0
             break
         except: print(RED + f"[{WHITE}·{RED}] Retrying..." + RESET)
-    print(t)
+    print(table)
     return math.ceil(total_pc/3), math.ceil(total_mobile/3), math.ceil(total_edge/3)
 
 def main():
@@ -148,6 +149,9 @@ def main():
 
         # Get information of the remaining tasks
         driver = pcDriver()
+        if "error" in str(driver):
+            print(driver)
+            return
         data = getStatus(driver)
 
         # Complete the PC searches
@@ -160,6 +164,9 @@ def main():
         if data[1] > 0 and not lvl_1:
             art_mobile()
             driver = mobileDriver()
+            if "error" in str(driver):
+                print(driver)
+                return
             search(driver, data[1])
             check = True
 
