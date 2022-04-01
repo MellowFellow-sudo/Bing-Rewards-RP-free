@@ -124,11 +124,11 @@ def getStatus(driver):
 
             mobile = driver.find_element(By.XPATH, '//*[@id="userPointsBreakdown"]/div/div[2]/div/div[2]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]/b').text
             total_mobile = 60 - int(mobile)
-            t.add_row([f'{GREEN if total_mobile == 0 else RED}PC{RESET}', f'{GREEN if total_mobile == 0 else RED}{total_mobile}{RESET}', f'{GREEN if total_mobile == 0 else RED}{math.ceil(total_mobile/3)}{RESET}'])
+            t.add_row([f'{GREEN if total_mobile == 0 else RED}Mobile{RESET}', f'{GREEN if total_mobile == 0 else RED}{total_mobile}{RESET}', f'{GREEN if total_mobile == 0 else RED}{math.ceil(total_mobile/3)}{RESET}'])
 
             edge = driver.find_element(By.XPATH, '//*[@id="userPointsBreakdown"]/div/div[2]/div/div[3]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]/b').text
             total_edge = 12 - int(edge)
-            t.add_row([f'{GREEN if total_edge == 0 else RED}PC{RESET}', f'{GREEN if total_edge == 0 else RED}{total_edge}{RESET}','-'])
+            t.add_row([f'{GREEN if total_edge == 0 else RED}Edge{RESET}', f'{GREEN if total_edge == 0 else RED}{total_edge}{RESET}','-'])
             break
         except: print(RED + f"[{WHITE}·{RED}] Retrying..." + RESET)
     print(t)
