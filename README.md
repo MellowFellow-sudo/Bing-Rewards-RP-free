@@ -14,10 +14,14 @@ And, finally, change the Windows User on:
 WINDOWS_USER = "Neko" # Change this to your username
 ```
 Run the program and it automatically starts Edge and makes the searches on PC mode and Mobile mode.
+![image](https://user-images.githubusercontent.com/57575090/161355998-0e6b8362-dfc1-4833-aa55-0834368db183.png)
 
 # Important! ⚠️
 You can't use Edge when te program is running, so you need to close Edge before running the program.
 That's why it takes the Edge data.
+
+# Reward 🥵
+![image](https://user-images.githubusercontent.com/57575090/161355891-71f72e14-1695-4193-96b8-a83f85956a8e.png)
 
 # Workflow 💡
 - [ ] Do daily tasks
