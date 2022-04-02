@@ -186,6 +186,7 @@ def main():
 
     open('usedKeywords.txt', 'w').write("")
     # tasks(driver)
+    driver.quit()
     input(f"\n{GREEN}[{WHITE}·{GREEN}] Done! {RESET}Press enter to close") # Add total poinst gotten c:
 
 if __name__ == "__main__":
