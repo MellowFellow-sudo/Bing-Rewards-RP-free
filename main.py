@@ -6,10 +6,10 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from selenium.webdriver.common.by import By
 from colorama import Fore, init
 from prettytable import PrettyTable
-import requests, random, math, time
+import requests, random, math, time, os
 init()
 
-WINDOWS_USER = "Neko" # Change this to your username
+WINDOWS_USER = os.getlogin() # System Username
 lvl_1 = False
 
 ####### COLORS #######
