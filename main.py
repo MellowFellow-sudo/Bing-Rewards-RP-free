@@ -1,3 +1,4 @@
+from cgitb import reset
 from subprocess import CompletedProcess
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
@@ -45,7 +46,7 @@ def new_search():
     return search
 
 def art_pc():
-        print("""
+        print(WHITE + """
         
     ██████╗  ██████╗
     ██╔══██╗██╔════╝
@@ -54,10 +55,10 @@ def art_pc():
     ██║     ╚██████╗
     ╚═╝      ╚═════╝
                     
-    """)
+    """ + RESET)
 
 def art_mobile():
-    print("""
+    print(WHITE + """
 
     ███╗   ███╗ ██████╗ ██████╗ ██╗██╗     ███████╗
     ████╗ ████║██╔═══██╗██╔══██╗██║██║     ██╔════╝
@@ -66,7 +67,7 @@ def art_mobile():
     ██║ ╚═╝ ██║╚██████╔╝██████╔╝██║███████╗███████╗
     ╚═╝     ╚═╝ ╚═════╝ ╚═════╝ ╚═╝╚══════╝╚══════╝
                                                 
-    """)
+    """ + RESET)
 
 def pcDriver(driver):
     try: driver.quit()
@@ -157,6 +158,7 @@ def main():
         driver = pcDriver(driver)
         if "error" in str(driver):
             print(driver)
+            input(f"\nPress enter to close")
             return
         data = getStatus(driver)
 
@@ -177,13 +179,14 @@ def main():
             driver = mobileDriver(driver)
             if "error" in str(driver):
                 print(driver)
+                input(f"\nPress enter to close")
                 return
             search(driver, data[1])
             check = True
 
     open('usedKeywords.txt', 'w').write("")
     # tasks(driver)
-    print(f"\n{GREEN}[{WHITE}·{GREEN}] Done!{RESET}") # Add total poinst gotten c:
+    input(f"\n{GREEN}[{WHITE}·{GREEN}] Done! {RESET}Press enter to close") # Add total poinst gotten c:
 
 if __name__ == "__main__":
     main()
