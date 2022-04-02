@@ -9,7 +9,6 @@ First of all, you need to login to your account on Edge. The program uses the br
 
 Second, install the required dependencies: `pip install -r requirements.txt & pip install -r requirements.txt`
 
-```
 Run the program and it automatically starts Edge and makes the searches on PC mode and Mobile mode.
 ![image](https://user-images.githubusercontent.com/57575090/161355998-0e6b8362-dfc1-4833-aa55-0834368db183.png)
 
