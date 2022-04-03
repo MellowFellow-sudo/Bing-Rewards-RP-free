@@ -82,7 +82,8 @@ def pcDriver(driver, second=False):
         if not second:
             os.system("taskkill /f /im msedge.exe")
             pcDriver(driver, True)
-        return f"\n{RED}[{WHITE}error{RED}] Close Edge before using this program :3{RESET}{error}"
+        else:
+            return f"\n{RED}[{WHITE}error{RED}] Close Edge before using this program :3{RESET}{error}"
 
     return driver
 
@@ -103,7 +104,8 @@ def mobileDriver(driver, second=False):
         if not second:
             os.system("taskkill /f /im msedge.exe")
             mobileDriver(driver, True)
-        return f"\n{RED}[{WHITE}error{RED}] Close Edge before using this program :3{RESET}{error}"
+        else:
+            return f"\n{RED}[{WHITE}error{RED}] Close Edge before using this program :3{RESET}{error}"
     
     return driver
 
