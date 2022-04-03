@@ -10,7 +10,7 @@ import requests, random, math, time, os
 init()
 
 WINDOWS_USER = os.getlogin() # System Username
-lvl_1 = False
+lvl_1 = False # Check if the user is in lvl 1
 
 ####### COLORS #######
 RED = Fore.LIGHTRED_EX
@@ -69,20 +69,24 @@ def art_mobile():
                                                 
     """ + RESET)
 
-def pcDriver(driver):
+def pcDriver(driver, second=False):
     try: driver.quit()
     except: pass
 
     s = Service(EdgeChromiumDriverManager().install())
     options = webdriver.EdgeOptions()
-    options.add_argument(f"user-data-dir=C:\\Users\\{WINDOWS_USER}\\AppData\\Local\\Microsoft\\Edge\\User Data")
+    options.add_argument(f"user-data-dir=C:\\Users\\{WINDOWS_USER}\\AppData\\Local\\Microsoft\\Edge\\User Data") # Data1 for other profile
     options.add_argument("--log-level=3")
     try: driver = webdriver.Edge(service=s, options=options)
-    except Exception as error: return f"\n{RED}[{WHITE}error{RED}] Close Edge before using this program :3{RESET}\n{error}"
+    except Exception as error:
+        if not second:
+            os.system("taskkill /f /im msedge.exe")
+            pcDriver(driver, True)
+        return f"\n{RED}[{WHITE}error{RED}] Close Edge before using this program :3{RESET}{error}"
 
     return driver
 
-def mobileDriver(driver):
+def mobileDriver(driver, second=False):
     try: driver.quit()
     except: pass
 
@@ -92,10 +96,14 @@ def mobileDriver(driver):
 
     options = webdriver.EdgeOptions()
     options.add_experimental_option("mobileEmulation", mobile_emulation)
-    options.add_argument(f"user-data-dir=C:\\Users\\{WINDOWS_USER}\\AppData\\Local\\Microsoft\\Edge\\User Data")
+    options.add_argument(f"user-data-dir=C:\\Users\\{WINDOWS_USER}\\AppData\\Local\\Microsoft\\Edge\\User Data") # Data1 for other profile
     options.add_argument("--log-level=3")
     try: driver = webdriver.Chrome(service=s, options=options)
-    except Exception as error: return f"\n{RED}[{WHITE}error{RED}] Close Edge before using this program :3{RESET}\n{error}"
+    except Exception as error:
+        if not second:
+            os.system("taskkill /f /im msedge.exe")
+            mobileDriver(driver, True)
+        return f"\n{RED}[{WHITE}error{RED}] Close Edge before using this program :3{RESET}{error}"
     
     return driver
 
@@ -158,7 +166,7 @@ def main():
         driver = pcDriver(driver)
         if "error" in str(driver):
             print(driver)
-            input(f"\nPress enter to close")
+            input(f"\n[·] Press enter to close")
             return
         data = getStatus(driver)
 

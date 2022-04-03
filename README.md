@@ -1,5 +1,5 @@
 # Bing-Rewards-RP-free
-Program that makes the daily searches for PC and Mobile for now.
+Program that makes the daily searches for PC and Mobile using Python and Selenium.
 *The points you can win depends on the level of the account.*
 
 # How to use 📝
@@ -19,7 +19,8 @@ That's why it takes the Edge data.
 # Reward 🥵
 ![image](https://user-images.githubusercontent.com/57575090/161355891-71f72e14-1695-4193-96b8-a83f85956a8e.png)
 
-# Workflow 💡
+# To Do List 💡
+- [ ] PROVE PROXIES LOL (More points in other countries)
 - [ ] Do daily tasks
 - [ ] GUI?
 
