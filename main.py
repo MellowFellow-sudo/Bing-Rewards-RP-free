@@ -1,5 +1,6 @@
 from cgitb import reset
 from subprocess import CompletedProcess
+from matplotlib.style import available
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
@@ -81,7 +82,8 @@ def pcDriver(driver, second=False):
     except Exception as error:
         if not second:
             os.system("taskkill /f /im msedge.exe")
-            pcDriver(driver, True)
+            time.sleep(3)
+            driver = pcDriver(driver, True)
         else:
             return f"\n{RED}[{WHITE}error{RED}] Close Edge before using this program :3{RESET}{error}"
 
@@ -103,7 +105,8 @@ def mobileDriver(driver, second=False):
     except Exception as error:
         if not second:
             os.system("taskkill /f /im msedge.exe")
-            mobileDriver(driver, True)
+            time.sleep(3)
+            driver = mobileDriver(driver, True)
         else:
             return f"\n{RED}[{WHITE}error{RED}] Close Edge before using this program :3{RESET}{error}"
     
@@ -116,14 +119,12 @@ def search(driver, total):
         driver.get(f"https://www.bing.com/search?q={word}&qs=n&form=QBRE&sp=-1&pq=aaaa&sc=8-4&sk=&cvid=68BA88FDD17C49629D9563F0C2E1FEF1")
 
 def tasks(driver):
-    driver.get("https://rewards.bing.com")
-
-    time.sleep(2)
-    t1 = driver.find_element(By.XPATH, '//*[@id="daily-sets"]/mee-card-group[1]/div/mee-card[1]')
-    t1.click()
-
-    time.sleep(1)
+    search(driver, 1)
     driver.find_element(By.XPATH, '//*[@id="id_rh"]').click()
+    time.sleep(2)
+
+    t1 = driver.find_element(By.XPATH, '//*[@id="modern-flyout"]/div/div[3]/div[2]/div[1]/div[2]/div/div[1]')
+    t1.click()
 
     t2 = driver.find_element(By.XPATH, '//*[@id="modern-flyout"]/div/div[3]/div[2]/div[1]/div[2]/div/div[2]').click()
     t3 = driver.find_element(By.XPATH, '//*[@id="modern-flyout"]/div/div[3]/div[2]/div[1]/div[2]/div/div[3]').click()
@@ -196,8 +197,11 @@ def main():
 
     open('usedKeywords.txt', 'w').write("")
     # tasks(driver)
+    time.sleep(2)
+    available_points = driver.find_element(By.XPATH, '//*[@id="userBanner"]/mee-banner/div/div/div/div[2]/div[1]/mee-banner-slot-2/mee-rewards-user-status-item/mee-rewards-user-status-balance/div/div/div/div/div/p[1]/mee-rewards-counter-animation/span').text
+    print(f"{BLUE}[{WHITE}·{BLUE}] Available points: {available_points}")
     driver.quit()
-    input(f"\n{GREEN}[{WHITE}·{GREEN}] Done! {RESET}Press enter to close") # Add total poinst gotten c:
+    input(f"\n{GREEN}[{WHITE}·{GREEN}] Done! {RESET}Press enter to close")
 
 if __name__ == "__main__":
     main()
