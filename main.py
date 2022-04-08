@@ -1,3 +1,4 @@
+from cv2 import blur
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
@@ -5,15 +6,17 @@ from selenium.webdriver.common.by import By
 from colorama import Fore, init
 from prettytable import PrettyTable
 import requests, random, math, time, os
+
+from zmq import PUB
 init()
 
 WINDOWS_USER = os.getlogin() # System Username
 lvl_1 = False # Check if the user is in lvl 1
 
-COUNTRIES = { # To load the country's proxies
-    "EEUU": 5,
-    "Spain": 3
-}
+COUNTRIES = [ # To load the country's proxies [Country, points_for_search, proxie]
+    ["EEUU", 5, None],
+    ["Spain", 3, None]
+]
 
 # Get keywords
 word_site = "https://www.myhelpfulguides.com/keywords.txt"
@@ -206,11 +209,14 @@ def main():
                 search(driver, data[1])
                 check = True
 
-        input(f"\n[·] Change manually to Spain with VPN and press enter to continue")
-        check = True
+        if i < len(COUNTRIES) - 1:
+            vpn_res = input(f"\n{BLUE}[{WHITE}·{BLUE}] Change manually to Spain with VPN and press enter to continue... {MAGENTA}(send N to exit) {RESET}")
+            if vpn_res.lower() == 'n': break
+            check = True
 
     open('usedKeywords.txt', 'w').write("")
-    tasks(driver)
+    # tasks(driver)
+    
     time.sleep(2)
     available_points = driver.find_element(By.XPATH, '//*[@id="userBanner"]/mee-banner/div/div/div/div[2]/div[1]/mee-banner-slot-2/mee-rewards-user-status-item/mee-rewards-user-status-balance/div/div/div/div/div/p[1]/mee-rewards-counter-animation/span').text
     print(f"{BLUE}[{WHITE}·{BLUE}] Available points: {available_points}")
