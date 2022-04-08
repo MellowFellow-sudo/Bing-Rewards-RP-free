@@ -11,8 +11,8 @@ WINDOWS_USER = os.getlogin() # System Username
 lvl_1 = False # Check if the user is in lvl 1
 
 COUNTRIES = { # To load the country's proxies
-    "EEUU": "en",
-    "Spain": "es"
+    "EEUU": 5,
+    "Spain": 3
 }
 
 # Get keywords
@@ -136,7 +136,7 @@ def tasks(driver):
     t3 = driver.find_element(By.XPATH, '//*[@id="modern-flyout"]/div/div[3]/div[2]/div[1]/div[2]/div/div[3]').click()
     input()
 
-def getStatus(driver):
+def getStatus(driver, count_max):
     global lvl_1
     driver.get("https://rewards.bing.com/status/pointsbreakdown")
 
@@ -161,7 +161,7 @@ def getStatus(driver):
             break
         except: print(RED + f"[{WHITE}·{RED}] Retrying..." + RESET)
     print(table)
-    return math.ceil(total_pc/3), math.ceil(total_mobile/3), math.ceil(total_edge/3)
+    return math.ceil(total_pc/count_max), math.ceil(total_mobile/count_max), math.ceil(total_edge/count_max)
 
 def main():
     global lvl_1
@@ -171,6 +171,8 @@ def main():
     except: pass
 
     for i in range(len(COUNTRIES)): # Starts in EEUU
+        count_max = COUNTRIES[i][1]
+
         while check:
             check = False
 
@@ -180,7 +182,7 @@ def main():
                 print(driver)
                 input(f"\n[·] Press enter to close")
                 return
-            data = getStatus(driver)
+            data = getStatus(driver, count_max)
 
             # Complete the PC searches
             if data[0] > 0:

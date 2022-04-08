@@ -32,7 +32,7 @@ Finally you can do the Tasks in both countries c:
 # Tasks JS codes
 ### A lot of boxs
 ```js
-corrects = document.querySelectorAll('[iscorrectoption="True"]'); // All with "property" set to "value" exactly.
+corrects = document.querySelectorAll('[iscorrectoption="True"]')
 
 for(i=0;i<corrects.length;i++) {
     corrects[i].click()
