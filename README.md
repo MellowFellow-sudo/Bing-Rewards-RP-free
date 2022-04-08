@@ -16,12 +16,30 @@ Run the program and it automatically starts Edge and makes the searches on PC mo
 You can't use Edge when te program is running, so you need to close Edge before running the program.
 That's why it takes the Edge data.
 
+*Now the program kill Edge proccess for proceed with the program.
+
+# For double the points 🔥
+The program do the procces twice.
+First of all, make a search on Spain:
+
+Secondly, execute the program and wait until the program warns you to change the VPN, change the VPN to EEUU manually and press Enter to continue.
+
+Finally you can do the Tasks in both countries c:
+
 # Reward 🥵
 ![image](https://user-images.githubusercontent.com/57575090/161355891-71f72e14-1695-4193-96b8-a83f85956a8e.png)
 
+# Tasks JS codes
+### A lot of boxs
+```js
+corrects = document.querySelectorAll('[iscorrectoption="True"]'); // All with "property" set to "value" exactly.
+
+for(i=0;i<corrects.length;i++) {
+    corrects[i].click()
+}
+```
+
 # To Do List 💡
-- [ ] PROVE PROXIES LOL (More points in other countries)
 - [ ] Do daily tasks
 - [ ] GUI?
-
 

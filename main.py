@@ -1,6 +1,3 @@
-from cgitb import reset
-from subprocess import CompletedProcess
-from matplotlib.style import available
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
@@ -12,6 +9,16 @@ init()
 
 WINDOWS_USER = os.getlogin() # System Username
 lvl_1 = False # Check if the user is in lvl 1
+
+COUNTRIES = { # To load the country's proxies
+    "EEUU": "en",
+    "Spain": "es"
+}
+
+# Get keywords
+word_site = "https://www.myhelpfulguides.com/keywords.txt"
+response = requests.get(word_site)
+words = response.text.splitlines()
 
 ####### COLORS #######
 RED = Fore.LIGHTRED_EX
@@ -25,13 +32,10 @@ RESET = Fore.RESET
 ######################
 
 def new_search():
+    global words
+
     def Diff(li1, li2):
         return (list(set(li1) - set(li2)))
-
-    word_site = "https://www.myhelpfulguides.com/keywords.txt"
-
-    response = requests.get(word_site)
-    words = response.text.splitlines()
 
     for i in range(30):
         f = open('usedKeywords.txt', 'r')
@@ -123,8 +127,10 @@ def tasks(driver):
     driver.find_element(By.XPATH, '//*[@id="id_rh"]').click()
     time.sleep(2)
 
-    t1 = driver.find_element(By.XPATH, '//*[@id="modern-flyout"]/div/div[3]/div[2]/div[1]/div[2]/div/div[1]')
-    t1.click()
+    # t1 = driver.find_element(By.ID, 'modern-flyout')
+    open("index.html","w").write(driver.page_source)
+
+    # t1.click()
 
     t2 = driver.find_element(By.XPATH, '//*[@id="modern-flyout"]/div/div[3]/div[2]/div[1]/div[2]/div/div[2]').click()
     t3 = driver.find_element(By.XPATH, '//*[@id="modern-flyout"]/div/div[3]/div[2]/div[1]/div[2]/div/div[3]').click()
@@ -161,42 +167,48 @@ def main():
     global lvl_1
     check = True
     driver = None
+    try: os.system("taskkill /f /im msedge.exe")
+    except: pass
 
-    while check:
-        check = False
+    for i in range(len(COUNTRIES)): # Starts in EEUU
+        while check:
+            check = False
 
-        # Get information of the remaining tasks
-        driver = pcDriver(driver)
-        if "error" in str(driver):
-            print(driver)
-            input(f"\n[·] Press enter to close")
-            return
-        data = getStatus(driver)
-
-        # Complete the PC searches
-        if data[0] > 0:
-            art_pc()
-            search(driver, data[0])
-            check = True
-
-        if data[2] > 0 and data[0] == 0:
-            art_pc()
-            search(driver, data[2])
-            check = True
-
-        # Complete the Mobile searches
-        if data[1] > 0 and not lvl_1:
-            art_mobile()
-            driver = mobileDriver(driver)
+            # Get information of the remaining tasks
+            driver = pcDriver(driver)
             if "error" in str(driver):
                 print(driver)
-                input(f"\nPress enter to close")
+                input(f"\n[·] Press enter to close")
                 return
-            search(driver, data[1])
-            check = True
+            data = getStatus(driver)
+
+            # Complete the PC searches
+            if data[0] > 0:
+                art_pc()
+                search(driver, data[0])
+                check = True
+
+            if data[2] > 0 and data[0] == 0:
+                art_pc()
+                search(driver, data[2])
+                check = True
+
+            # Complete the Mobile searches
+            if data[1] > 0 and not lvl_1:
+                art_mobile()
+                driver = mobileDriver(driver)
+                if "error" in str(driver):
+                    print(driver)
+                    input(f"\nPress enter to close")
+                    return
+                search(driver, data[1])
+                check = True
+
+        input(f"\n[·] Change manually to Spain with VPN and press enter to continue")
+        check = True
 
     open('usedKeywords.txt', 'w').write("")
-    # tasks(driver)
+    tasks(driver)
     time.sleep(2)
     available_points = driver.find_element(By.XPATH, '//*[@id="userBanner"]/mee-banner/div/div/div/div[2]/div[1]/mee-banner-slot-2/mee-rewards-user-status-item/mee-rewards-user-status-balance/div/div/div/div/div/p[1]/mee-rewards-counter-animation/span').text
     print(f"{BLUE}[{WHITE}·{BLUE}] Available points: {available_points}")
