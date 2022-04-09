@@ -123,6 +123,7 @@ def search(driver, total):
         word = new_search()
         print(f"{CYAN}[{WHITE}{i+1}{CYAN}] Search: {BLUE}{word}{RESET}")
         driver.get(f"https://www.bing.com/search?q={word}&qs=n&form=QBRE&sp=-1&pq=aaaa&sc=8-4&sk=&cvid=68BA88FDD17C49629D9563F0C2E1FEF1")
+        time.sleep(0.5)
 
 def tasks(driver):
     search(driver, 1)
