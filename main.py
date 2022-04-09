@@ -1,4 +1,3 @@
-from cv2 import blur
 from selenium import webdriver
 from selenium.webdriver.edge.service import Service
 from webdriver_manager.microsoft import EdgeChromiumDriverManager
@@ -6,8 +5,6 @@ from selenium.webdriver.common.by import By
 from colorama import Fore, init
 from prettytable import PrettyTable
 import requests, random, math, time, os
-
-from zmq import PUB
 init()
 
 WINDOWS_USER = os.getlogin() # System Username
@@ -83,6 +80,7 @@ def pcDriver(driver, second=False):
 
     s = Service(EdgeChromiumDriverManager().install())
     options = webdriver.EdgeOptions()
+    
     options.add_argument(f"user-data-dir=C:\\Users\\{WINDOWS_USER}\\AppData\\Local\\Microsoft\\Edge\\User Data") # Data1 for other profile
     options.add_argument("--log-level=3")
     try: driver = webdriver.Edge(service=s, options=options)
@@ -93,7 +91,7 @@ def pcDriver(driver, second=False):
             driver = pcDriver(driver, True)
         else:
             return f"\n{RED}[{WHITE}error{RED}] Close Edge before using this program :3{RESET}{error}"
-
+    
     return driver
 
 def mobileDriver(driver, second=False):
@@ -106,6 +104,7 @@ def mobileDriver(driver, second=False):
 
     options = webdriver.EdgeOptions()
     options.add_experimental_option("mobileEmulation", mobile_emulation)
+    
     options.add_argument(f"user-data-dir=C:\\Users\\{WINDOWS_USER}\\AppData\\Local\\Microsoft\\Edge\\User Data") # Data1 for other profile
     options.add_argument("--log-level=3")
     try: driver = webdriver.Chrome(service=s, options=options)
@@ -148,16 +147,16 @@ def getStatus(driver, count_max):
         try:
             pc = driver.find_element(By.XPATH, '//*[@id="userPointsBreakdown"]/div/div[2]/div/div[1]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]').text.split(' / ')
             total_pc = int(pc[1]) - int(pc[0])
-            table.add_row([f'{GREEN if total_pc == 0 else RED}PC{RESET}', f'{GREEN if total_pc == 0 else RED}{total_pc}{RESET}', f'{GREEN if total_pc == 0 else RED}{math.ceil(total_pc/3)}{RESET}'])
+            table.add_row([f'{GREEN if total_pc == 0 else RED}PC{RESET}', f'{GREEN if total_pc == 0 else RED}{total_pc}{RESET}', f'{GREEN if total_pc == 0 else RED}{math.ceil(total_pc/count_max)}{RESET}'])
 
             mobile = driver.find_element(By.XPATH, '//*[@id="userPointsBreakdown"]/div/div[2]/div/div[2]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]').text.split(' / ')
             total_mobile = int(mobile[1]) - int(mobile[0])
-            table.add_row([f'{GREEN if total_mobile == 0 else RED}Mobile{RESET}', f'{GREEN if total_mobile == 0 else RED}{total_mobile}{RESET}', f'{GREEN if total_mobile == 0 else RED}{math.ceil(total_mobile/3)}{RESET}'])
+            table.add_row([f'{GREEN if total_mobile == 0 else RED}Mobile{RESET}', f'{GREEN if total_mobile == 0 else RED}{total_mobile}{RESET}', f'{GREEN if total_mobile == 0 else RED}{math.ceil(total_mobile/count_max)}{RESET}'])
 
             try:
                 edge = driver.find_element(By.XPATH, '//*[@id="userPointsBreakdown"]/div/div[2]/div/div[3]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]').text.split(' / ')
                 total_edge = int(edge[1]) - int(edge[0])
-                table.add_row([f'{GREEN if total_edge == 0 else RED}Edge{RESET}', f'{GREEN if total_edge == 0 else RED}{total_edge}{RESET}',f'{GREEN if total_edge == 0 else RED}{math.ceil(total_edge/3)}{RESET}'])
+                table.add_row([f'{GREEN if total_edge == 0 else RED}Edge{RESET}', f'{GREEN if total_edge == 0 else RED}{total_edge}{RESET}',f'{GREEN if total_edge == 0 else RED}{math.ceil(total_edge/count_max)}{RESET}'])
             except:
                 lvl_1 = True
                 total_edge = 0
