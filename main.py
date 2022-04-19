@@ -8,6 +8,7 @@ import requests, random, math, time, os
 init()
 
 WINDOWS_USER = os.getlogin() # System Username
+ALLOW_VPN = True
 lvl_1 = False # Check if the user is in lvl 1
 
 COUNTRIES = [ # To load the country's proxies [Country, points_for_search, proxie]
@@ -123,7 +124,7 @@ def search(driver, total):
         word = new_search()
         print(f"{CYAN}[{WHITE}{i+1}{CYAN}] Search: {BLUE}{word}{RESET}")
         driver.get(f"https://www.bing.com/search?q={word}&qs=n&form=QBRE&sp=-1&pq=aaaa&sc=8-4&sk=&cvid=68BA88FDD17C49629D9563F0C2E1FEF1")
-        time.sleep(0.5)
+        time.sleep(1)
 
 def tasks(driver):
     search(driver, 1)
@@ -218,10 +219,12 @@ def main():
     # tasks(driver)
     
     time.sleep(2)
-    available_points = driver.find_element(By.XPATH, '//*[@id="userBanner"]/mee-banner/div/div/div/div[2]/div[1]/mee-banner-slot-2/mee-rewards-user-status-item/mee-rewards-user-status-balance/div/div/div/div/div/p[1]/mee-rewards-counter-animation/span').text
-    print(f"{BLUE}[{WHITE}·{BLUE}] Available points: {available_points}")
-    driver.quit()
+    try:
+        available_points = driver.find_element(By.XPATH, '//*[@id="userBanner"]/mee-banner/div/div/div/div[2]/div[1]/mee-banner-slot-2/mee-rewards-user-status-item/mee-rewards-user-status-balance/div/div/div/div/div/p[1]/mee-rewards-counter-animation/span').text
+        print(f"{BLUE}[{WHITE}·{BLUE}] Available points: {available_points}")
+    except: pass
     input(f"\n{GREEN}[{WHITE}·{GREEN}] Done! {RESET}Press enter to close")
+    driver.quit()
 
 if __name__ == "__main__":
     main()
