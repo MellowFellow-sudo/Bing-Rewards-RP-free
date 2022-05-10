@@ -36,3 +36,7 @@ function dosCajasPequenas() {
     document.getElementsByClassName("btOption b_cards")[0].click()
 }
 
+//               //
+function dosCajasPequenas() {
+    document.getElementsByClassName("rq_button")[0].firstChild.firstChild.click()
+}

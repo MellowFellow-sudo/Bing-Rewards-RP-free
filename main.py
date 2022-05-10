@@ -168,11 +168,13 @@ def getStatus(driver, count_max):
     return math.ceil(total_pc/count_max), math.ceil(total_mobile/count_max), math.ceil(total_edge/count_max)
 
 def main():
-    global lvl_1
+    global lvl_1, COUNTRIES
     check = True
     driver = None
     try: os.system("taskkill /f /im msedge.exe")
     except: pass
+
+    if not ALLOW_VPN: COUNTRIES = [["Spain", 3, None]]
 
     for i in range(len(COUNTRIES)): # Starts in EEUU
         count_max = COUNTRIES[i][1]
@@ -189,14 +191,9 @@ def main():
             data = getStatus(driver, count_max)
 
             # Complete the PC searches
-            if data[0] > 0:
+            if data[0] + data[2] > 0:
                 art_pc()
-                search(driver, data[0])
-                check = True
-
-            if data[2] > 0 and data[0] == 0:
-                art_pc()
-                search(driver, data[2])
+                search(driver, data[0] + data[2])
                 check = True
 
             # Complete the Mobile searches
@@ -224,7 +221,8 @@ def main():
         print(f"{BLUE}[{WHITE}·{BLUE}] Available points: {available_points}")
     except: pass
     input(f"\n{GREEN}[{WHITE}·{GREEN}] Done! {RESET}Press enter to close")
-    driver.quit()
+    try: driver.quit()
+    except: pass
 
 if __name__ == "__main__":
     main()
