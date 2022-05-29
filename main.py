@@ -4,15 +4,20 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from selenium.webdriver.common.by import By
 from colorama import Fore, init
 from prettytable import PrettyTable
-import requests, random, math, time, os
+from nordvpn_switcher import initialize_VPN, rotate_VPN, terminate_VPN
+import requests, random, math, time, os, json
 init()
 
-WINDOWS_USER = os.getlogin() # System Username
-ALLOW_VPN = True
-lvl_1 = False # Check if the user is in lvl 1
+# OPTIONS
+ALLOW_VPN = True        # Duplicate the points using VPN - (manual mode)
+NORD_VPN_OPEN = False    # Only if you have NordVPN opened - (automatic mode)
+MULTIACCOUNT = False    # Execute the script for all the accounts in 'accounts.json'
+lvl_1 = False           # Check if the user is in lvl 1 (this process is automatic)
 
-COUNTRIES = [ # To load the country's proxies [Country, points_for_search, proxie]
-    ["EEUU", 5, None],
+# GLOBAL VARIABLES
+WINDOWS_USER = os.getlogin() # System Username
+COUNTRIES = [ # To load the country's proxies [Country, points_for_search, NordVPN_country_name (None = default)]
+    ["EEUU", 5, 'united states'],
     ["Spain", 3, None]
 ]
 
@@ -75,15 +80,24 @@ def art_mobile():
                                                 
     """ + RESET)
 
-def pcDriver(driver, second=False):
+def loginAccount(driver, account):
+    driver.get("https://login.live.com/login.srf")
+    driver.find_element(By.ID, "i0116").send_keys(account["email"])
+    driver.find_element(By.XPATH, "//*[contains(@id,'idSIButton')]").click()
+    time.sleep(0.5)
+    driver.find_element(By.ID, "i0118").send_keys(account["password"])
+    driver.find_element(By.XPATH, "//*[contains(@id,'idSIButton')]").click()
+    time.sleep(2)
+
+def pcDriver(s, driver, second=False, account=False):
     try: driver.quit()
     except: pass
 
-    s = Service(EdgeChromiumDriverManager().install())
     options = webdriver.EdgeOptions()
-    
-    options.add_argument(f"user-data-dir=C:\\Users\\{WINDOWS_USER}\\AppData\\Local\\Microsoft\\Edge\\User Data") # Data1 for other profile
+    if account: options.add_argument("inprivate")
+    else: options.add_argument(f"user-data-dir=C:\\Users\\{WINDOWS_USER}\\AppData\\Local\\Microsoft\\Edge\\User Data") # Data1 for other profile
     options.add_argument("--log-level=3")
+
     try: driver = webdriver.Edge(service=s, options=options)
     except Exception as error:
         if not second:
@@ -93,21 +107,23 @@ def pcDriver(driver, second=False):
         else:
             return f"\n{RED}[{WHITE}error{RED}] Close Edge before using this program :3{RESET}{error}"
     
+    if account: loginAccount(driver, account) 
     return driver
 
-def mobileDriver(driver, second=False):
+def mobileDriver(s, driver, second=False, account=False):
     try: driver.quit()
     except: pass
 
-    s = Service(EdgeChromiumDriverManager().install())
     mobile_emulation = {
     "userAgent": "Mozilla/5.0 (Linux; Android 5.2.1; en-us; Nexus 5 Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19"}
 
     options = webdriver.EdgeOptions()
     options.add_experimental_option("mobileEmulation", mobile_emulation)
     
-    options.add_argument(f"user-data-dir=C:\\Users\\{WINDOWS_USER}\\AppData\\Local\\Microsoft\\Edge\\User Data") # Data1 for other profile
+    if account: options.add_argument("inprivate")
+    else: options.add_argument(f"user-data-dir=C:\\Users\\{WINDOWS_USER}\\AppData\\Local\\Microsoft\\Edge\\User Data") # Data1 for other profile
     options.add_argument("--log-level=3")
+
     try: driver = webdriver.Chrome(service=s, options=options)
     except Exception as error:
         if not second:
@@ -117,6 +133,7 @@ def mobileDriver(driver, second=False):
         else:
             return f"\n{RED}[{WHITE}error{RED}] Close Edge before using this program :3{RESET}{error}"
     
+    if account: loginAccount(driver, account) 
     return driver
 
 def search(driver, total):
@@ -167,7 +184,7 @@ def getStatus(driver, count_max):
     print(table)
     return math.ceil(total_pc/count_max), math.ceil(total_mobile/count_max), math.ceil(total_edge/count_max)
 
-def main():
+def main(s, account=None):
     global lvl_1, COUNTRIES
     check = True
     driver = None
@@ -183,7 +200,9 @@ def main():
             check = False
 
             # Get information of the remaining tasks
-            driver = pcDriver(driver)
+            if account: driver = pcDriver(s, driver, account=account)
+            else: driver = pcDriver(s, driver)
+
             if "error" in str(driver):
                 print(driver)
                 input(f"\n[·] Press enter to close")
@@ -199,7 +218,10 @@ def main():
             # Complete the Mobile searches
             if data[1] > 0 and not lvl_1:
                 art_mobile()
-                driver = mobileDriver(driver)
+
+                if account: driver = mobileDriver(s, driver, account=account)
+                else: driver = mobileDriver(s, driver)
+
                 if "error" in str(driver):
                     print(driver)
                     input(f"\nPress enter to close")
@@ -220,9 +242,17 @@ def main():
         available_points = driver.find_element(By.XPATH, '//*[@id="userBanner"]/mee-banner/div/div/div/div[2]/div[1]/mee-banner-slot-2/mee-rewards-user-status-item/mee-rewards-user-status-balance/div/div/div/div/div/p[1]/mee-rewards-counter-animation/span').text
         print(f"{BLUE}[{WHITE}·{BLUE}] Available points: {available_points}")
     except: pass
-    input(f"\n{GREEN}[{WHITE}·{GREEN}] Done! {RESET}Press enter to close")
-    try: driver.quit()
-    except: pass
 
 if __name__ == "__main__":
-    main()
+    if MULTIACCOUNT:
+        accounts = json.load(open("accounts.json", "r"))
+
+        for account in accounts:
+            s = Service(EdgeChromiumDriverManager().install())
+            print(f"\n{BLUE}[{WHITE}·{BLUE}] Starting account {WHITE}{account['name']}{WHITE}...{RESET}")
+            main(s, account)
+    else:
+        s = Service(EdgeChromiumDriverManager().install())
+        main(s)
+
+    input(f"\n{GREEN}[{WHITE}·{GREEN}] Done! {RESET}Press enter to close")

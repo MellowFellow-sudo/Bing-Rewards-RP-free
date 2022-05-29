@@ -41,5 +41,6 @@ for(i=0;i<corrects.length;i++) {
 
 # To Do List 💡
 - [ ] Do daily tasks
+- [ ] Auto Update (In the next version)
 - [ ] GUI?
 
