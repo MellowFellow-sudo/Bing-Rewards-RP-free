@@ -1,0 +1,8 @@
+{
+    "info" : "To load the country's [Country, Points_for_search",
+    "countries" : [
+        ["EEUU", 5],
+        ["Spain", 3]
+    ],
+    "default_country" : ["Spain", 3]
+}

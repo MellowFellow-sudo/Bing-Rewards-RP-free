@@ -4,27 +4,27 @@ from webdriver_manager.microsoft import EdgeChromiumDriverManager
 from selenium.webdriver.common.by import By
 from colorama import Fore, init
 from prettytable import PrettyTable
-from nordvpn_switcher import initialize_VPN, rotate_VPN, terminate_VPN
-import requests, random, math, time, os, json
+from data.tasks_selector import selector
+from data.updater import git_update
+import requests, random, math, time, os, json, yaml
 init()
 
-# OPTIONS
-ALLOW_VPN = True        # Duplicate the points using VPN - (manual mode)
-NORD_VPN_OPEN = False    # Only if you have NordVPN opened - (automatic mode)
-MULTIACCOUNT = False    # Execute the script for all the accounts in 'accounts.json'
-lvl_1 = False           # Check if the user is in lvl 1 (this process is automatic)
+# PREFERENCES
+with open("config/preferences.yml", "r") as f:
+    preferences = yaml.load(f, Loader=yaml.FullLoader)["PREFERENCES"]
+
+    SCORE_GOAL = preferences["SCORE_GOAL"]
+    DO_TASKS = preferences["DO_TASKS"]
+    DO_SEARCHES = preferences["DO_SEARCHES"]
+    AUTO_UPDATE = preferences["AUTO_UPDATE"]
+    ALLOW_VPN = preferences["ALLOW_VPN"]
+    IPVANISH = preferences["IPVANISH"]
+    MULTIACCOUNT = preferences["MULTIACCOUNT"]
+    lvl_1 = preferences["lvl_1"]
 
 # GLOBAL VARIABLES
 WINDOWS_USER = os.getlogin() # System Username
-COUNTRIES = [ # To load the country's proxies [Country, points_for_search, NordVPN_country_name (None = default)]
-    ["EEUU", 5, 'united states'],
-    ["Spain", 3, None]
-]
-
-# Get keywords
-word_site = "https://www.myhelpfulguides.com/keywords.txt"
-response = requests.get(word_site)
-words = response.text.splitlines()
+COUNTRIES = json.loads(open('config/countries.json', 'r').read())
 
 ####### COLORS #######
 RED = Fore.LIGHTRED_EX
@@ -37,22 +37,33 @@ WHITE = Fore.LIGHTWHITE_EX
 RESET = Fore.RESET
 ######################
 
+# Get keywords
+word_site = "https://www.myhelpfulguides.com/keywords.txt"
+try:
+    response = requests.get(word_site, timeout=3)
+    words = response.text.splitlines()
+except:
+    print(f"{YELLOW}[{WHITE}·{YELLOW}] Using emergency words{RESET}")
+    with open("data/emergency_words.txt", "r") as f:
+        words = f.read().splitlines()
+
 def new_search():
     global words
 
     def Diff(li1, li2):
         return (list(set(li1) - set(li2)))
 
-    for i in range(30):
-        f = open('usedKeywords.txt', 'r')
+    with open('data/usedKeywords.txt', 'r') as f:
         used = f.read().splitlines()
 
     new = Diff(words, used)
+    if len(new) == 0:
+        with open('data/usedKeywords.txt', 'w+') as f: f.write("")
+        return new_search()
 
     search = random.choice(new)
-    f = open('usedKeywords.txt', 'a')
-    f.write(search + "\n")
-    f.close()
+    with open('data/usedKeywords.txt', 'a') as x:
+            x.write(search + "\n")
 
     return search
 
@@ -114,12 +125,11 @@ def mobileDriver(s, driver, second=False, account=False):
     try: driver.quit()
     except: pass
 
-    mobile_emulation = {
-    "userAgent": "Mozilla/5.0 (Linux; Android 5.2.1; en-us; Nexus 5 Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19"}
+    mobile_emulation = {"userAgent": "Mozilla/5.0 (Linux; Android 5.2.1; en-us; Nexus 5 Build/JOP40D) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/18.0.1025.166 Mobile Safari/535.19"}
 
     options = webdriver.EdgeOptions()
     options.add_experimental_option("mobileEmulation", mobile_emulation)
-    
+
     if account: options.add_argument("inprivate")
     else: options.add_argument(f"user-data-dir=C:\\Users\\{WINDOWS_USER}\\AppData\\Local\\Microsoft\\Edge\\User Data") # Data1 for other profile
     options.add_argument("--log-level=3")
@@ -136,26 +146,91 @@ def mobileDriver(s, driver, second=False, account=False):
     if account: loginAccount(driver, account) 
     return driver
 
-def search(driver, total):
-    for i in range(total):
-        word = new_search()
-        print(f"{CYAN}[{WHITE}{i+1}{CYAN}] Search: {BLUE}{word}{RESET}")
-        driver.get(f"https://www.bing.com/search?q={word}&qs=n&form=QBRE&sp=-1&pq=aaaa&sc=8-4&sk=&cvid=68BA88FDD17C49629D9563F0C2E1FEF1")
-        time.sleep(1)
+def search(driver, total, task=False):
+    i = 0
+
+    while i != total:
+        i += 1
+        try: 
+            word = new_search()
+            if not task: 
+                print(f"{CYAN}[{WHITE}{i}{CYAN}] Search: {BLUE}{word}{RESET}", end="")
+
+            driver.get(f"https://www.bing.com/search?q={word}&qs=n&form=QBRE&sp=-1&pq=aaaa&sc=8-4&sk=&cvid=68BA88FDD17C49629D9563F0C2E1FEF1")
+            time.sleep(2)
+            print("")
+        except:
+            print(RED + " - Error. Retrying..." + RESET)
+            i -= 1
 
 def tasks(driver):
-    search(driver, 1)
-    driver.find_element(By.XPATH, '//*[@id="id_rh"]').click()
-    time.sleep(2)
+    search(driver, 1, True)
+    print(f"\n{CYAN}[{WHITE}·{CYAN}] Doing Tasks... {RESET}")
 
-    # t1 = driver.find_element(By.ID, 'modern-flyout')
-    open("index.html","w").write(driver.page_source)
+    # Do daily tasks
+    check = False
+    i = 1
+    while not check:
+        time.sleep(3)
+        try : driver.find_element(By.XPATH, '//*[@id="id_rh"]').click()
+        except:
+            try: driver.execute_script('document.getElementsByClassName("b_hide langdisp")[0].firstChild.click()')
+            except: pass
+            
+            driver.refresh()
+            continue
+        time.sleep(2)
 
-    # t1.click()
+        try:
+            check = driver.execute_script('let j = 2; let section = document.querySelector("#bepfm").contentDocument.body.getElementsByClassName("rw-accd-i")[0].children[1].firstChild.children; while(true) {if(j < 0 || section.length < 3) {return true; break} try{if(section[j].getElementsByClassName("point_cont complete").length == 0) {section[j].firstChild.click(); return false; break} else throw Error} catch {j--}}')
+            
+            if not check:
+                time.sleep(4)
 
-    t2 = driver.find_element(By.XPATH, '//*[@id="modern-flyout"]/div/div[3]/div[2]/div[1]/div[2]/div/div[2]').click()
-    t3 = driver.find_element(By.XPATH, '//*[@id="modern-flyout"]/div/div[3]/div[2]/div[1]/div[2]/div/div[3]').click()
-    input()
+                selector(driver)
+                driver.refresh()
+                print(f"\t{GREEN}[{WHITE}·{GREEN}] Daily Task {WHITE}{i}{RESET}")
+                i += 1
+        except:
+            driver.refresh()
+            continue
+
+        if i > 10: 
+            print(f"\t{RED}[{WHITE}!{RED}] Daily Task Limit Reached {RESET}")
+            break
+    
+    # Select the second box and do their tasks
+    contador = 1
+    query = True
+    firts = True
+    while query:
+        time.sleep(3)
+        driver.find_element(By.XPATH, '//*[@id="id_rh"]').click()
+        time.sleep(2)
+
+        try:
+            driver.execute_script('try{document.querySelector("#bepfm").contentDocument.body.getElementsByClassName("rw-accd-i")[1].children[1].click()}catch{}')
+            time.sleep(1)
+            query = driver.execute_script('let resp = false; try {let section = document.querySelector("#bepfm").contentDocument.body.getElementsByClassName("rw-accd-i")[1].children[2].firstChild.children; section[0].firstChild.click(); if(section[0].firstChild.firstChild.tagName == "svg") throw Error; return true}catch{return false}')
+            time.sleep(4)
+        except:
+            driver.refresh()
+            continue
+
+        if query:
+            if firts: print(WHITE + "\t--------------------" + RESET)
+            firts = False
+
+            time.sleep(2)
+            selector(driver)
+            time.sleep(2)
+            driver.refresh()
+            print(f"\t{GREEN}[{WHITE}·{GREEN}] Secondary Task {WHITE}{contador}{RESET}")
+            contador += 1
+
+        if contador > 15:
+            print(f"\t{RED}[{WHITE}!{RED}] Secondary Task Limit Reached {RESET}")
+            break
 
 def getStatus(driver, count_max):
     global lvl_1
@@ -165,6 +240,7 @@ def getStatus(driver, count_max):
     while True:
         try:
             pc = driver.find_element(By.XPATH, '//*[@id="userPointsBreakdown"]/div/div[2]/div/div[1]/div/div[2]/mee-rewards-user-points-details/div/div/div/div/p[2]').text.split(' / ')
+            
             total_pc = int(pc[1]) - int(pc[0])
             table.add_row([f'{GREEN if total_pc == 0 else RED}PC{RESET}', f'{GREEN if total_pc == 0 else RED}{total_pc}{RESET}', f'{GREEN if total_pc == 0 else RED}{math.ceil(total_pc/count_max)}{RESET}'])
 
@@ -180,7 +256,15 @@ def getStatus(driver, count_max):
                 lvl_1 = True
                 total_edge = 0
             break
-        except: print(RED + f"[{WHITE}·{RED}] Retrying..." + RESET)
+        except: 
+            print(RED + f"[{WHITE}·{RED}] Retrying..." + RESET)
+            
+            try: driver.execute_script('try {document.getElementsByClassName("glyph-cancel")[0].click()} catch {}')
+            except: pass
+            
+            driver.refresh()
+            time.sleep(2)
+
     print(table)
     return math.ceil(total_pc/count_max), math.ceil(total_mobile/count_max), math.ceil(total_edge/count_max)
 
@@ -191,22 +275,19 @@ def main(s, account=None):
     try: os.system("taskkill /f /im msedge.exe")
     except: pass
 
-    if not ALLOW_VPN: COUNTRIES = [["Spain", 3, None]]
+    if not ALLOW_VPN: COUNTRIES["countries"] = [COUNTRIES["default_country"]]
 
-    for i in range(len(COUNTRIES)): # Starts in EEUU
-        count_max = COUNTRIES[i][1]
-
-        while check:
+    for i in range(len(COUNTRIES["countries"])):
+        print(f"\n{CYAN}[{WHITE}·{CYAN}] Connecting to {COUNTRIES['countries'][i][0]}... {RESET}")
+        count_max = COUNTRIES["countries"][i][1]
+        
+        while check and DO_SEARCHES:
             check = False
 
             # Get information of the remaining tasks
             if account: driver = pcDriver(s, driver, account=account)
             else: driver = pcDriver(s, driver)
 
-            if "error" in str(driver):
-                print(driver)
-                input(f"\n[·] Press enter to close")
-                return
             data = getStatus(driver, count_max)
 
             # Complete the PC searches
@@ -228,31 +309,43 @@ def main(s, account=None):
                     return
                 search(driver, data[1])
                 check = True
+        
+        if not DO_SEARCHES:
+            if account: driver = pcDriver(s, driver, account=account)
+            else: driver = pcDriver(s, driver)
 
-        if i < len(COUNTRIES) - 1:
-            vpn_res = input(f"\n{BLUE}[{WHITE}·{BLUE}] Change manually to Spain with VPN and press enter to continue... {MAGENTA}(send N to exit) {RESET}")
+        if DO_TASKS: tasks(driver)
+
+        if i < len(COUNTRIES["countries"]) - 1:
+            vpn_res = input(f"\n{BLUE}[{WHITE}·{BLUE}] Change manually to Spain with VPN and press enter to continue... {MAGENTA}(N to exit) {RESET}")
             if vpn_res.lower() == 'n': break
             check = True
-
-    open('usedKeywords.txt', 'w').write("")
-    # tasks(driver)
     
-    time.sleep(2)
+    driver.get("https://rewards.bing.com/status/pointsbreakdown")
+    time.sleep(3)
+    
     try:
         available_points = driver.find_element(By.XPATH, '//*[@id="userBanner"]/mee-banner/div/div/div/div[2]/div[1]/mee-banner-slot-2/mee-rewards-user-status-item/mee-rewards-user-status-balance/div/div/div/div/div/p[1]/mee-rewards-counter-animation/span').text
-        print(f"{BLUE}[{WHITE}·{BLUE}] Available points: {available_points}")
+        print(f"\n{BLUE}[{WHITE}·{BLUE}] Available points: {available_points}")
+        if available_points >= SCORE_GOAL: print(f"{GREEN}[{WHITE}·{GREEN}] You have reached the goal! {RESET}")
     except: pass
 
+    return driver
+
 if __name__ == "__main__":
+    if AUTO_UPDATE: git_update()
+
     if MULTIACCOUNT:
-        accounts = json.load(open("accounts.json", "r"))
+        accounts = json.load(open("config/accounts.json", "r"))
 
         for account in accounts:
             s = Service(EdgeChromiumDriverManager().install())
             print(f"\n{BLUE}[{WHITE}·{BLUE}] Starting account {WHITE}{account['name']}{WHITE}...{RESET}")
-            main(s, account)
+            driver = main(s, account)
     else:
         s = Service(EdgeChromiumDriverManager().install())
-        main(s)
+        driver = main(s)
 
     input(f"\n{GREEN}[{WHITE}·{GREEN}] Done! {RESET}Press enter to close")
+    try: driver.quit()
+    except: pass
