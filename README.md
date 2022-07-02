@@ -2,7 +2,7 @@
 This program automates the daily searches and tasks for Bing Rewards. You can earn up to 6500 points every 11-15 days (using VPN).
 
 <div align="center">
-<img src="https://i.imgur.com/XqQZQZq.png" width="300" /><br>
+<img src="https://user-images.githubusercontent.com/57575090/177008524-6c68a6f3-8bdc-442c-b4e6-df89ba603943.png" width="300" /><br><br>
 <img alt="PyPI - Python Version" src="https://img.shields.io/pypi/pyversions/bing-rewards?style=flat-square&label=Python&logo=python&logoColor=yellow">
 <a href="https://pypi.org/project/bing-rewards/"> <img alt="PyPi" src="https://img.shields.io/pypi/v/bing-rewards?label=PyPI&style=flat-square&logo=pypi&logoColor=yellow"></a>
 <img alt="PyPI - License" src="https://img.shields.io/pypi/l/bing-rewards?style=flat-square&label=License&color=blueviolet">
@@ -31,7 +31,9 @@ All the configuration is inside `/config` folder:<br>
 # How to use 📝
 Run the program and it automatically starts Edge and makes the searches and tasks on PC mode and Mobile mode.
 If you have the VPN option activated you will be asked to manipulate the VPN for each country in the list<br>
-![image](https://i.imgur.com/XqQZQZq.png)
+[![IMAGE ALT TEXT HERE](https://user-images.githubusercontent.com/57575090/177008476-c13c5e41-7d2d-439f-8fe6-3aeccb9aca8a.png)](https://www.youtube.com/watch?v=csWUqLFyooI)
+<br>
+https://www.youtube.com/watch?v=csWUqLFyooI
 <br><br>
 
 # Important! ⚠️
