@@ -49,7 +49,7 @@ def Four_Boxes(driver):
             check = True
             i += 1
 
-        if i == 3: i = 0
+        if i == 4: i = 0
 
     if check: return False
     return True
