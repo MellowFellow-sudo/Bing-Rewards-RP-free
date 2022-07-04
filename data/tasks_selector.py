@@ -7,7 +7,7 @@ def Box_or_Box(driver):
         time.sleep(2)
 
         while(res):
-            res = driver.execute_script('if (document.getElementsByClassName("headerMessage_Refresh").length == 0) {return true} else {return false}')
+            res = driver.execute_script('if (document.getElementsByClassName("headerMessage_Refresh").length != 0 || document.getElementsByClassName("headerMessage").length != 0) {return false} else {return true}')
             driver.execute_script('try {document.getElementsByClassName("btOptionCard")[1].click(); return true} catch {return false}')
             time.sleep(5)
         return False
