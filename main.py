@@ -13,14 +13,14 @@ init()
 with open("config/preferences.yml", "r") as f:
     preferences = yaml.load(f, Loader=yaml.FullLoader)["PREFERENCES"]
 
-    SCORE_GOAL = preferences["SCORE_GOAL"]
+    SCORE_GOAL = int(preferences["SCORE_GOAL"])
     DO_TASKS = preferences["DO_TASKS"]
     DO_SEARCHES = preferences["DO_SEARCHES"]
     AUTO_UPDATE = preferences["AUTO_UPDATE"]
     ALLOW_VPN = preferences["ALLOW_VPN"]
     IPVANISH = preferences["IPVANISH"]
     MULTIACCOUNT = preferences["MULTIACCOUNT"]
-    lvl_1 = preferences["lvl_1"]
+    lvl_1 = False
 
 # GLOBAL VARIABLES
 WINDOWS_USER = os.getlogin() # System Username
@@ -325,15 +325,17 @@ def main(s, account=None):
     time.sleep(3)
     
     try:
-        available_points = driver.find_element(By.XPATH, '//*[@id="userBanner"]/mee-banner/div/div/div/div[2]/div[1]/mee-banner-slot-2/mee-rewards-user-status-item/mee-rewards-user-status-balance/div/div/div/div/div/p[1]/mee-rewards-counter-animation/span').text
+        available_points = int(driver.find_element(By.XPATH, '//*[@id="userBanner"]/mee-banner/div/div/div/div[2]/div[1]/mee-banner-slot-2/mee-rewards-user-status-item/mee-rewards-user-status-balance/div/div/div/div/div/p[1]/mee-rewards-counter-animation/span').text.replace(",",""))
         print(f"\n{BLUE}[{WHITE}·{BLUE}] Available points: {available_points}")
-        if available_points >= SCORE_GOAL: print(f"{GREEN}[{WHITE}·{GREEN}] You have reached the goal! {RESET}")
+        if available_points >= SCORE_GOAL: print(f"{GREEN}[{WHITE}·{GREEN}] You have reached the goal of {WHITE}{SCORE_GOAL}{GREEN}!{RESET}")
     except: pass
 
     return driver
 
 if __name__ == "__main__":
-    if AUTO_UPDATE: git_update()
+    if AUTO_UPDATE: 
+        git_update()
+        time.sleep(2)
 
     if MULTIACCOUNT:
         accounts = json.load(open("config/accounts.json", "r"))

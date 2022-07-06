@@ -3,7 +3,6 @@ PREFERENCES:
     DO_TASKS: True          # Activate the tasks
     DO_SEARCHES: True       # Activate the searches
     AUTO_UPDATE : False     # (Needed Git and have done 'git clone') Automatically update the program from Github
-    ALLOW_VPN : True        # Duplicate the points using VPN - (manual mode)
+    ALLOW_VPN : False       # Duplicate the points using VPN - (manual mode)
     IPVANISH : False        # (Not yet) Only if you have IpVanish opened - (automatic mode)
     MULTIACCOUNT : False    # (Not yet) Execute the script for all the accounts in 'accounts.json'
-    lvl_1 : False           # (This process is automatic) - Check if the user is in lvl 1
