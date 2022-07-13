@@ -325,7 +325,7 @@ def main(s, account=None):
     time.sleep(3)
     
     try:
-        available_points = int(driver.find_element(By.XPATH, '//*[@id="rewardsBanner"]/div/div/div[2]/div[1]/mee-rewards-user-status-item/mee-rewards-user-status-balance/div/div/div/div/div/p[1]/mee-rewards-counter-animation/span').text.replace(",",""))
+        available_points = int(driver.find_elements(By.CLASS_NAME, 'margin-top-1')[0].text)
         print(f"\n{BLUE}[{WHITE}·{BLUE}] Available points: {WHITE}{available_points}")
         if available_points >= SCORE_GOAL: print(f"{GREEN}[{WHITE}·{GREEN}] You have reached the goal of {WHITE}{SCORE_GOAL}{GREEN}!{RESET}")
     except: pass
