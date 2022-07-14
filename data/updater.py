@@ -3,7 +3,8 @@ import subprocess
 init()
 
 def run(cmd):
-    return subprocess.run(["powershell", *cmd.split(' ')], capture_output=True)
+    txt = f"powershell {cmd}"
+    return subprocess.run(txt, capture_output=True)
 
 def git_update():
     process = run("git reset --hard HEAD; git clean -d -f; git pull origin main")
