@@ -5,12 +5,12 @@ init()
 def pref_restore(preferences):
     temp = ""
 
-    with open("data/preferences.yml", "r") as f:
+    with open("config/preferences.yml", "r") as f:
         new = yaml.load(f, Loader=yaml.FullLoader)["PREFERENCES"]
         n_values = new.values()
         p_values = preferences.values()
     
-    with open("data/preferences.yml", "r") as f:
+    with open("config/preferences.yml", "r") as f:
         for x in f.readlines():
             i = 0
             
@@ -24,7 +24,7 @@ def pref_restore(preferences):
 
             temp = temp + x
         
-        with open("data/preferences.yml", "w+") as f:
+        with open("config/preferences.yml", "w+") as f:
             if temp != "": f.write(temp)
 
 def run(cmd):
