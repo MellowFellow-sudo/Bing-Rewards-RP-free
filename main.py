@@ -5,7 +5,7 @@ from selenium.webdriver.common.by import By
 from colorama import Fore, init
 from prettytable import PrettyTable
 from data.tasks_selector import selector
-from data.updater import git_update
+from data.updater import git_check
 import requests, random, math, time, os, json, yaml
 init()
 
@@ -157,7 +157,7 @@ def search(driver, total, task=False):
                 print(f"{CYAN}[{WHITE}{i}{CYAN}] Search: {BLUE}{word}{RESET}", end="")
 
             driver.get(f"https://www.bing.com/search?q={word}&qs=n&form=QBRE&sp=-1&pq=aaaa&sc=8-4&sk=&cvid=68BA88FDD17C49629D9563F0C2E1FEF1")
-            time.sleep(2)
+            time.sleep(1) # Time between searches
             print("")
         except:
             print(RED + " - Error. Retrying..." + RESET)
@@ -325,16 +325,15 @@ def main(s, account=None):
     time.sleep(3)
     
     try:
-        available_points = int(driver.find_elements(By.CLASS_NAME, 'margin-top-1')[0].text.text.replace(",",""))
+        available_points = int(driver.find_elements(By.CLASS_NAME, 'margin-top-1')[0].text.replace(",",""))
         print(f"\n{BLUE}[{WHITE}·{BLUE}] Available points: {WHITE}{available_points}")
         if available_points >= SCORE_GOAL: print(f"{GREEN}[{WHITE}·{GREEN}] You have reached the goal of {WHITE}{SCORE_GOAL}{GREEN}!{RESET}")
-    except: pass
-
+    except Exception as error: print(f"{RED}[{WHITE}·{RED}] Error: {WHITE}{error}{RESET}")
     return driver
 
 if __name__ == "__main__":
     if AUTO_UPDATE: 
-        git_update()
+        git_check()
         time.sleep(2)
 
     if MULTIACCOUNT:
