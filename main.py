@@ -205,7 +205,13 @@ def tasks(driver):
     firts = True
     while query:
         time.sleep(3)
-        driver.find_element(By.XPATH, '//*[@id="id_rh"]').click()
+        try : driver.find_element(By.XPATH, '//*[@id="id_rh"]').click()
+        except:
+            try: driver.execute_script('document.getElementsByClassName("b_hide langdisp")[0].firstChild.click()')
+            except: pass
+            
+            driver.refresh()
+            continue
         time.sleep(2)
 
         try:
