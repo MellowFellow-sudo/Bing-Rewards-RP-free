@@ -33,11 +33,14 @@ Run the program and it automatically starts Edge and makes the searches and task
 If you have the VPN option activated you will be asked to manipulate the VPN for each country in the list<br>
 [![IMAGE ALT TEXT HERE](https://user-images.githubusercontent.com/57575090/177008476-c13c5e41-7d2d-439f-8fe6-3aeccb9aca8a.png)](https://www.youtube.com/watch?v=csWUqLFyooI)
 <br>
-https://www.youtube.com/watch?v=csWUqLFyooI
+
+## **- Youtube Video:** *https://www.youtube.com/watch?v=csWUqLFyooI*
 <br><br>
 
 # Important! ⚠️
-You can't use Edge when te program is running, so you need to close Edge before running the program.
+This program has been created to work on Windows 10. I have not tried to use it on Linux due to the Selenium package gives problems.
+
+You can't use Edge when the program is running, so you need to close Edge before running the program.
 That's why it takes the Edge data.
 
 ~ *Now the program kills the Edge process before starting.*
@@ -56,10 +59,17 @@ My first intention with this program was to get RP, the currency within the Leag
 But there are many other rewards that the page offers: https://rewards.bing.com/redeem/
 <br><br>
 
+# Contributors
+<table>
+  <tr>
+    <td align="center"><a href="https://github.com/embm4-ua"><img src="https://avatars.githubusercontent.com/u/98742666?v=4" width="122px;" alt=""/><br /><sub><b>Eric Mas</b></sub></a>
+  </tr>
+</table>
+<br><br>
+
 # To Do List 💡
 - [x] Do daily tasks
 - [x] Auto Update
 - [ ] Automatic VPN changing (In the next version)
-- [ ] Multiple Accounts
-- [ ] Automatic redeem points
+- [ ] Multiple Accounts *(Not sure)*
 - [ ] GUI
