@@ -35,7 +35,7 @@ If you have the VPN option activated you will be asked to manipulate the VPN for
 <br>
 
 ## **- Youtube Video:** *https://www.youtube.com/watch?v=csWUqLFyooI*
-<br><br>
+<br>
 
 # Important! ⚠️
 This program has been created to work on Windows 10. I have not tried to use it on Linux due to the Selenium package gives problems.
@@ -62,10 +62,10 @@ But there are many other rewards that the page offers: https://rewards.bing.com/
 # Contributors
 <table>
   <tr>
-    <td align="center"><a href="https://github.com/embm4-ua"><img src="https://avatars.githubusercontent.com/u/98742666?v=4" width="122px;" alt=""/><br /><sub><b>Eric Mas</b></sub></a>
+    <td align="center"><a href="https://github.com/EricDragon8"><img src="https://avatars.githubusercontent.com/u/98742666?v=4" width="122px;" alt=""/><br /><sub><b>Eric Mas</b></sub></a>
   </tr>
 </table>
-<br><br>
+<br>
 
 # To Do List 💡
 - [x] Do daily tasks
