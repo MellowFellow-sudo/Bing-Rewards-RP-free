@@ -34,8 +34,7 @@ If you have the VPN option activated you will be asked to manipulate the VPN for
 [![IMAGE ALT TEXT HERE](https://user-images.githubusercontent.com/57575090/177008476-c13c5e41-7d2d-439f-8fe6-3aeccb9aca8a.png)](https://www.youtube.com/watch?v=csWUqLFyooI)
 <br>
 
-## **- Youtube Video:** *https://www.youtube.com/watch?v=csWUqLFyooI*
-<br>
+### **- Youtube Video:** *https://www.youtube.com/watch?v=csWUqLFyooI*
 
 # Important! ⚠️
 This program has been created to work on Windows 10. I have not tried to use it on Linux due to the Selenium package gives problems.
