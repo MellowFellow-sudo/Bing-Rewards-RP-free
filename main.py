@@ -10,7 +10,7 @@ import requests, random, math, time, os, json, yaml
 init()
 
 # PREFERENCES
-with open("config/preferences.yml", "r") as f:
+with open("config/preferences.yml", "r", encoding="utf-8") as f:
     preferences = yaml.load(f, Loader=yaml.FullLoader)["PREFERENCES"]
 
     SCORE_GOAL = int(preferences["SCORE_GOAL"])
@@ -24,7 +24,7 @@ with open("config/preferences.yml", "r") as f:
 
 # GLOBAL VARIABLES
 WINDOWS_USER = os.getlogin() # System Username
-COUNTRIES = json.loads(open('config/countries.json', 'r').read())
+COUNTRIES = json.loads(open('config/countries.json', 'r', encoding="utf-8").read())
 
 ####### COLORS #######
 RED = Fore.LIGHTRED_EX
@@ -44,7 +44,7 @@ try:
     words = response.text.splitlines()
 except:
     print(f"{YELLOW}[{WHITE}·{YELLOW}] Using emergency words{RESET}")
-    with open("data/emergency_words.txt", "r") as f:
+    with open("data/emergency_words.txt", "r", encoding="utf-8") as f:
         words = f.read().splitlines()
 
 def new_search():
@@ -53,16 +53,16 @@ def new_search():
     def Diff(li1, li2):
         return (list(set(li1) - set(li2)))
 
-    with open('data/usedKeywords.txt', 'r') as f:
+    with open('data/usedKeywords.txt', 'r', encoding="utf-8") as f:
         used = f.read().splitlines()
 
     new = Diff(words, used)
     if len(new) == 0:
-        with open('data/usedKeywords.txt', 'w+') as f: f.write("")
+        with open('data/usedKeywords.txt', 'w+', encoding="utf-8") as f: f.write("")
         return new_search()
 
     search = random.choice(new)
-    with open('data/usedKeywords.txt', 'a') as x:
+    with open('data/usedKeywords.txt', 'a', encoding="utf-8") as x:
             x.write(search + "\n")
 
     return search
@@ -267,8 +267,8 @@ def getStatus(driver, count_max):
             
             try: driver.execute_script('try {document.getElementsByClassName("glyph-cancel")[0].click()} catch {}')
             except: pass
-            
-            driver.refresh()
+
+            driver.get("https://rewards.bing.com/status/pointsbreakdown")
             time.sleep(2)
 
     print(table)
@@ -343,7 +343,7 @@ if __name__ == "__main__":
         time.sleep(2)
 
     if MULTIACCOUNT:
-        accounts = json.load(open("config/accounts.json", "r"))
+        accounts = json.load(open("config/accounts.json", "r", encoding="utf-8"))
 
         for account in accounts:
             s = Service(EdgeChromiumDriverManager().install())

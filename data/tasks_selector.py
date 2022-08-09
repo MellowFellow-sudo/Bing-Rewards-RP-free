@@ -34,14 +34,17 @@ def To_Many_Box(driver):
     while(res):
         res = driver.execute_script('if (document.getElementsByClassName("headerMessage_Refresh").length != 0 || document.getElementsByClassName("headerMessage").length != 0) {return false} else {return true}')
         res2 = driver.execute_script("""try {if(document.getElementById("rq_standardPromos")) throw Error; corrects = document.querySelectorAll('[iscorrectoption="True"]'); if (corrects.length == 0) throw Error; for(i=0;i<corrects.length;i++) {corrects[i].click()}; return true} catch {return false}""")
-        if not res2: break
-        if res: 
+        
+        if res2:
             time.sleep(4)
             check = True
+            i += 1
+        else: break
         
         if i == 30: 
             driver.refresh()
             i = 0
+
 
     if check: return False
     return True
